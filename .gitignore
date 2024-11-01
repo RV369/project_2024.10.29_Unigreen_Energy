@@ -2,6 +2,18 @@
 __pycache__/
 *.py[cod]
 *$py.class
+text.txt
+20240902_eur_big_nodes_prices_pub.xls
+20240903_eur_big_nodes_prices_pub.xls
+20240904_eur_big_nodes_prices_pub.xls
+20240905_eur_big_nodes_prices_pub.xls
+20240906_eur_big_nodes_prices_pub.xls
+20240907_eur_big_nodes_prices_pub.xls
+20240908_eur_big_nodes_prices_pub.xls
+20240909_eur_big_nodes_prices_pub.xls
+out_csv.csv
+out_excel.xlsx
+out_xml.xml
 
 # C extensions
 *.so
