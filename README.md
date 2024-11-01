@@ -25,9 +25,7 @@ source venv/Scripts/activate
 pip install -r requirements.txt
 ```
 - Запустить файл unigreen.py
-```sh
-docker-compose up -d
-```
+
 - файлы будут загружены в папку с проектом
 
 ## License
