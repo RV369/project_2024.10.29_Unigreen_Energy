@@ -3,6 +3,7 @@ import statistics
 import pandas as pd
 import requests
 import urllib3
+import xlwt
 
 # Отключаем предупреждение о необходимости верификации
 urllib3.disable_warnings()
@@ -20,7 +21,7 @@ def atsenergo_data(dict_url: dict) -> None:
         try:
             resp = requests.get(
                 f'https://www.atsenergo.ru/nreport?fid={value}&region=eur',
-                verify=False, # Отключение верификации.
+                verify=False,  # Отключение верификации.
             )
         except requests.exceptions.ConnectionError as e:
             print(f'Ошибка загрузки файла {key}: {e}')
@@ -35,9 +36,26 @@ def atsenergo_data(dict_url: dict) -> None:
             print(f'Файл {key} успешно сохранён')
 
 
+def write_tu_xls(out_dict: dict) -> None:
+    """Сохранение данных в формате xls
+    args:
+        out_dict: dict
+    """
+    workbook = xlwt.Workbook()
+    sheet = workbook.add_sheet('Sheet1')
+    for i in range(len(out_dict['value'])+1):
+        if i == 0:
+            sheet.write(0, 0, 'date')
+            sheet.write(0, 1, 'value')
+        else:
+            sheet.write(i, 0, out_dict['date'][i-1])
+            sheet.write(i, 1, out_dict['value'][i-1])
+    workbook.save('out_xls_excel.xls')
+
+
 def pandas_data(
         dict_url: dict, start: int, finish: int, region_of_the_RF: str,
-    ) -> None:
+        ) -> None:
     """Определение средних цен в указанные часы для заданного региона.
 
     Args:
@@ -48,7 +66,7 @@ def pandas_data(
     """
     try:
         # Словарь для вывода данных.
-        out_dict = {'date': [], 'value': []}
+        out_dict: dict = {'date': [], 'value': []}
         # Цикл для обращения к файлам, в каждой итерации
         # обращение в следующему файлу.
         for key in dict_url:
@@ -65,7 +83,7 @@ def pandas_data(
                 df.dropna(inplace=True, axis=0)
                 # Фильтрация объектов датафрейм по региону.
                 df = df.loc[
-                    df['Unnamed: 4'] == region_of_the_RF,['Unnamed: 5'],]
+                    df['Unnamed: 4'] == region_of_the_RF, ['Unnamed: 5']]
                 # Добавление в список list_data среднего значения
                 # за каждый час.
                 list_data.append(float(df['Unnamed: 5'].mean()))
@@ -82,6 +100,8 @@ def pandas_data(
         pd.DataFrame(out_dict).to_excel('out_excel.xlsx', index=False)
         pd.DataFrame(out_dict).to_xml('out_xml.xml', index=False)
         pd.DataFrame(out_dict).to_csv('out_csv.csv', index=False)
+        # Запись данных в формат xls
+        write_tu_xls(out_dict)
     except Exception as e:
         print(f'Ошибка сохранения файлов: {e}')
     else:
@@ -100,13 +120,13 @@ dict_url: dict = {
     '20240908': '21891809BF93030CE0630A4900E19D02',
     '20240909': '219D3D097A2A0362E0630A4900E124C2',
 }
-# Начало интервала.
+# Начало интервала (от 0 до 23).
 start: int = 2
-# Завершение интервала.
+# Завершение интервала (от 0 до 23).
 finish: int = 15
 # Регион Российской Федерации.
 region_of_the_RF: str = 'Республика Бурятия'
 
 
-atsenergo_data(dict_url)
+# atsenergo_data(dict_url)
 pandas_data(dict_url, start, finish, region_of_the_RF)

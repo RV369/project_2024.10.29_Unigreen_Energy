@@ -14,6 +14,7 @@ text.txt
 out_csv.csv
 out_excel.xlsx
 out_xml.xml
+out_xls_excel.xls
 
 # C extensions
 *.so
