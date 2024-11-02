@@ -36,6 +36,54 @@ def atsenergo_data(dict_url: dict) -> None:
             print(f'Файл {key} успешно сохранён')
 
 
+def pandas_data(
+        dict_url: dict, start: int, finish: int, region_of_the_RF: str,
+        ) -> dict:
+    """Определение средних цен в указанные часы для заданного региона.
+
+    Args:
+        dict_url: dict
+        start: int
+        finish: int
+        region_of_the_RF: str
+    Return:
+        out_dict: dict
+    """
+    try:
+        # Словарь для вывода данных.
+        out_dict: dict = {'date': [], 'value': []}
+        # Цикл для обращения к файлам, в каждой итерации
+        # обращение в следующему файлу.
+        for key in dict_url:
+            xls = pd.ExcelFile(f'{key}_eur_big_nodes_prices_pub.xls')
+            # Список для хранения средних значений за каждый час.
+            list_data: list[float] = []
+            # Цикл для обращения к листам книги внутри файла.
+            # В каждой итерации обращение к классу pandas.ExcelFile
+            # в который уже загружен файл, повторного обращения к диску нет.
+            for hour in range(start, finish+1):
+                # В каждой итерации создаётся новый датафрейм с 2 колонками.
+                df = pd.read_excel(xls, hour, usecols='E:F')
+                # Удаление пустых объектов (NaN).
+                df.dropna(inplace=True, axis=0)
+                # Фильтрация объектов датафрейм по региону.
+                df = df.loc[
+                    df['Unnamed: 4'] == region_of_the_RF, ['Unnamed: 5']]
+                # Добавление в список list_data среднего значения
+                # за каждый час.
+                list_data.append(float(df['Unnamed: 5'].mean()))
+            # Создание даты в списке date в словаре вывода out_dict.
+            out_dict['date'].append(f'{key[6:]}.{key[4:6]}.{key[:4]}')
+            # Вычисление среднего значения за сутки в списке list_data,
+            # метод statistics.mean().
+            # Добавление данных в список value словаря вывода out_dict.
+            out_dict['value'].append(statistics.mean(list_data))
+    except Exception as e:
+        print(f'Ошибка при анализе данных {e}')
+    else:
+        write_tu_fails(out_dict)
+
+
 def write_tu_fails(out_dict: dict) -> None:
     """Сохранение файлов с данными в различных форматах.
     args:
@@ -59,52 +107,6 @@ def write_tu_fails(out_dict: dict) -> None:
         print(f'Ошибка сохранения файлов: {e}')
     else:
         print('Файлы успешно сохранёны')
-
-
-def pandas_data(
-        dict_url: dict, start: int, finish: int, region_of_the_RF: str,
-        ) -> None:
-    """Определение средних цен в указанные часы для заданного региона.
-
-    Args:
-        dict_url: dict
-        start: int
-        finish: int
-        region_of_the_RF: str
-    """
-    try:
-        # Словарь для вывода данных.
-        out_dict: dict = {'date': [], 'value': []}
-        # Цикл для обращения к файлам, в каждой итерации
-        # обращение в следующему файлу.
-        for key in dict_url:
-            xls = pd.ExcelFile(f'{key}_eur_big_nodes_prices_pub.xls')
-            # Список для хранения средних значений за каждый час.
-            list_data: list[float] = []
-            # Цикл для обращения к листам книги внутри файла.
-            # В каждой итерации обращение к классу pandas.ExcelFile
-            # в который уже загружен файл, повторного обращения к диску нет.
-            for hour in range(start, finish + 1):
-                # В каждой итерации создаётся новый датафрейм с 2 колонками.
-                df = pd.read_excel(xls, hour, usecols='E:F')
-                # Удаление пустых объектов (NaN).
-                df.dropna(inplace=True, axis=0)
-                # Фильтрация объектов датафрейм по региону.
-                df = df.loc[
-                    df['Unnamed: 4'] == region_of_the_RF, ['Unnamed: 5']]
-                # Добавление в список list_data среднего значения
-                # за каждый час.
-                list_data.append(float(df['Unnamed: 5'].mean()))
-            # Создание даты в списке date в словаре вывода out_dict.
-            out_dict['date'].append(f'{key[6:]}.{key[4:6]}.{key[:4]}')
-            # Вычисление среднего значения за сутки в списке list_data,
-            # метод statistics.mean().
-            # Добавление данных в список value словаря вывода out_dict.
-            out_dict['value'].append(statistics.mean(list_data))
-    except Exception as e:
-        print(f'Ошибка при анализе данных {e}')
-    else:
-        write_tu_fails(out_dict)
 
 
 # Ключи - уникальные строки в названиях файлов.
