@@ -36,21 +36,29 @@ def atsenergo_data(dict_url: dict) -> None:
             print(f'Файл {key} успешно сохранён')
 
 
-def write_tu_xls(out_dict: dict) -> None:
+def write_tu_fails(out_dict: dict) -> None:
     """Сохранение данных в формате xls
     args:
         out_dict: dict
     """
-    workbook = xlwt.Workbook()
-    sheet = workbook.add_sheet('Sheet1')
-    for i in range(len(out_dict['value'])+1):
-        if i == 0:
-            sheet.write(0, 0, 'date')
-            sheet.write(0, 1, 'value')
-        else:
-            sheet.write(i, 0, out_dict['date'][i-1])
-            sheet.write(i, 1, out_dict['value'][i-1])
-    workbook.save('out_xls_excel.xls')
+    try:
+        pd.DataFrame(out_dict).to_excel('out_excel.xlsx', index=False)
+        pd.DataFrame(out_dict).to_xml('out_xml.xml', index=False)
+        pd.DataFrame(out_dict).to_csv('out_csv.csv', index=False)
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet('Sheet1')
+        for i in range(len(out_dict['value'])+1):
+            if i == 0:
+                sheet.write(0, 0, 'date')
+                sheet.write(0, 1, 'value')
+            else:
+                sheet.write(i, 0, out_dict['date'][i-1])
+                sheet.write(i, 1, out_dict['value'][i-1])
+        workbook.save('out_xls_excel.xls')
+    except Exception as e:
+        print(f'Ошибка сохранения файлов: {e}')
+    else:
+        print('Файлы успешно сохранёны')
 
 
 def pandas_data(
@@ -95,17 +103,8 @@ def pandas_data(
             out_dict['value'].append(statistics.mean(list_data))
     except Exception as e:
         print(f'Ошибка при анализе данных {e}')
-    try:
-        # Сохранение на диск набора файлов с форматами из документации.
-        pd.DataFrame(out_dict).to_excel('out_excel.xlsx', index=False)
-        pd.DataFrame(out_dict).to_xml('out_xml.xml', index=False)
-        pd.DataFrame(out_dict).to_csv('out_csv.csv', index=False)
-        # Запись данных в формат xls
-        write_tu_xls(out_dict)
-    except Exception as e:
-        print(f'Ошибка сохранения файлов: {e}')
     else:
-        print('Файлы успешно сохранёны')
+        write_tu_fails(out_dict)
 
 
 # Ключи - уникальные строки в названиях файлов.
