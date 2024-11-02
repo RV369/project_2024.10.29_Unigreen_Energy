@@ -37,7 +37,7 @@ def atsenergo_data(dict_url: dict) -> None:
 
 
 def write_tu_fails(out_dict: dict) -> None:
-    """Сохранение данных в формате xls
+    """Сохранение файлов с данными в различных форматах.
     args:
         out_dict: dict
     """
