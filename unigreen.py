@@ -128,5 +128,5 @@ finish: int = 15
 region_of_the_RF: str = 'Республика Бурятия'
 
 
-# atsenergo_data(dict_url)
+atsenergo_data(dict_url)
 pandas_data(dict_url, start, finish, region_of_the_RF)
