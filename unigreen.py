@@ -67,7 +67,7 @@ def pandas_data(
                 # Фильтрация объектов датафрейм по региону.
                 df = df.loc[
                     df['Unnamed: 4'] == region_of_the_RF, ['Unnamed: 5']]
-                # Удаление пустых объектов (NaN).
+                # Удаление пустых строк (NaN).
                 df.dropna(inplace=True, axis=0)
                 # Добавление в список list_data среднего значения
                 # за каждый час.
