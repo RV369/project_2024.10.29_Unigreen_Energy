@@ -73,8 +73,7 @@ def pandas_data(
                 list_data.append(float(df['Unnamed: 5'].mean()))
             # Создание даты в списке date в словаре вывода out_dict.
             out_dict['date'].append(f'{key[6:]}.{key[4:6]}.{key[:4]}')
-            # Вычисление среднего значения за сутки в списке list_data,
-            # метод statistics.mean().
+            # Среднее значение за сутки в списке методом statistics.mean().
             # Добавление данных в список value словаря вывода out_dict.
             out_dict['value'].append(statistics.mean(list_data))
     except Exception as e:
