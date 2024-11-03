@@ -98,15 +98,16 @@ def write_tu_fails(out_dict: dict) -> None:
         header_font = xlwt.Font()
         header_font.name = 'Arial'
         header_font.bold = True
-        header_style = xlwt.XFStyle()
-        header_style.font = header_font
+        header_style_center = xlwt.easyxf('align: horiz center;')
+        header_style_center.font = header_font
+        style_center = xlwt.easyxf('align: horiz center;')
         for i in range(len(out_dict['value'])+1):
             if i == 0:
-                sheet.write(0, 0, 'date', header_style)
-                sheet.write(0, 1, 'value', header_style)
+                sheet.write(0, 0, 'date', header_style_center)
+                sheet.write(0, 1, 'value', header_style_center)
             else:
-                sheet.write(i, 0, out_dict['date'][i-1])
-                sheet.write(i, 1, out_dict['value'][i-1])
+                sheet.write(i, 0, out_dict['date'][i-1], style_center)
+                sheet.write(i, 1, out_dict['value'][i-1], style_center)
         workbook.save('out_xls_excel.xls')
     except Exception as e:
         print(f'Ошибка сохранения файлов: {e}')
