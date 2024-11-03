@@ -69,8 +69,7 @@ def pandas_data(
                     df['Unnamed: 4'] == region_of_the_RF, ['Unnamed: 5']]
                 # Удаление пустых строк (NaN).
                 df.dropna(inplace=True, axis=0)
-                # Добавление в список list_data среднего значения
-                # за каждый час.
+                # Добавление в список list_data среднего значения за час.
                 list_data.append(float(df['Unnamed: 5'].mean()))
             # Создание даты в списке date в словаре вывода out_dict.
             out_dict['date'].append(f'{key[6:]}.{key[4:6]}.{key[:4]}')
