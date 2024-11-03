@@ -64,11 +64,11 @@ def pandas_data(
             for hour in range(start, finish+1):
                 # В каждой итерации создаётся новый датафрейм с 2 колонками.
                 df = pd.read_excel(xls, hour, usecols='E:F')
-                # Удаление пустых объектов (NaN).
-                df.dropna(inplace=True, axis=0)
                 # Фильтрация объектов датафрейм по региону.
                 df = df.loc[
                     df['Unnamed: 4'] == region_of_the_RF, ['Unnamed: 5']]
+                # Удаление пустых объектов (NaN).
+                df.dropna(inplace=True, axis=0)
                 # Добавление в список list_data среднего значения
                 # за каждый час.
                 list_data.append(float(df['Unnamed: 5'].mean()))
@@ -95,10 +95,15 @@ def write_tu_fails(out_dict: dict) -> None:
         pd.DataFrame(out_dict).to_csv('out_csv.csv', index=False)
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
+        header_font = xlwt.Font()
+        header_font.name = 'Arial'
+        header_font.bold = True
+        header_style = xlwt.XFStyle()
+        header_style.font = header_font
         for i in range(len(out_dict['value'])+1):
             if i == 0:
-                sheet.write(0, 0, 'date')
-                sheet.write(0, 1, 'value')
+                sheet.write(0, 0, 'date', header_style)
+                sheet.write(0, 1, 'value', header_style)
             else:
                 sheet.write(i, 0, out_dict['date'][i-1])
                 sheet.write(i, 1, out_dict['value'][i-1])
